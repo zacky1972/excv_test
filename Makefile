@@ -28,15 +28,37 @@ endif
 
 NIF=priv/libnif.so
 
-all: priv $(NIF)
+C_SRCS := c_src/libnif.c
+C_OBJS := $(C_SRCS:c_src/%.c=obj/%.o)
+C_DEPS := $(C_SRCS:c_src/%.c=obj/%.d)
+
+$(warning C_OBJS = $(C_OBJS))
+$(warning C_DEPS = $(C_DEPS))
+
+OLD_SHELL := $(SHELL)
+SHELL = $(warning [Making: $@] [Dependencies: $^] [Changed: $?])$(OLD_SHELL)
+
+all: priv obj $(NIF)
+
 
 priv:
 	mkdir -p priv
 
-$(NIF): c_src/libnif.c
-	$(CC) $(ERL_CFLAGS) $(CFLAGS) \
-		-o $@ $< \
-		$(ERL_LDFLAGS) $(LDFLAGS)
+
+obj:
+	mkdir -p obj
+
+
+$(NIF): $(C_OBJS)
+	$(CC) -o $@ $< $(ERL_LDFLAGS) $(LDFLAGS)
+
+$(C_DEPS): obj/%.d: c_src/%.c
+	$(CC) $(ERL_CFLAGS) $(CFLAGS) $< -MM -MP -MF $@
+
+$(C_OBJS): obj/%.o: c_src/%.c obj/%.d
+	$(CC) -c $(ERL_CFLAGS) $(CFLAGS) -o $@ $<
+
+include $(shell ls $(C_DEPS) 2>/dev/null)
 
 clean:
-	$(RM) $(NIF)
+	$(RM) $(NIF) obj/*

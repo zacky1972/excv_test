@@ -24,3 +24,6 @@ excv_test-*.tar
 
 # Ignore priv
 /priv
+
+# Ignore obj
+/obj
