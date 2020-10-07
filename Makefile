@@ -13,9 +13,9 @@ endif
 ERL_CFLAGS ?= -I$(ERL_EI_INCLUDE_DIR)
 ERL_LDFLAGS ?= -L$(ERL_EI_LIBDIR)
 
-LDFLAGS += -shared
+LDFLAGS += -shared -lstdc++
 CFLAGS ?= -std=c11 -Ofast -Wall -Wextra -Wno-unused-parameter
-CXXFLAGS ?= -Ofast -Wall -Wextra -Wno-unused-parameter
+CXXFLAGS ?= -std=c++11 -Ofast -Wall -Wextra -Wno-unused-parameter
 
 ifeq ($(CROSSCOMPILE),)
 	ifneq ($(OS),Windows_NT)
@@ -59,7 +59,7 @@ obj:
 
 
 $(NIF): $(C_OBJS) $(CXX_OBJS)
-	$(CC) -o $@ $< $(ERL_LDFLAGS) $(LDFLAGS)
+	$(CXX) -o $@ $^ $(ERL_LDFLAGS) $(LDFLAGS)
 
 $(C_DEPS): obj/%.d: c_src/%.c
 	$(CC) $(ERL_CFLAGS) $(CFLAGS) $< -MM -MP -MF $@
