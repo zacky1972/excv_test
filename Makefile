@@ -15,11 +15,14 @@ ERL_LDFLAGS ?= -L$(ERL_EI_LIBDIR)
 
 LDFLAGS += -shared
 CFLAGS ?= -std=c11 -Ofast -Wall -Wextra -Wno-unused-parameter
+CXXFLAGS ?= -Ofast -Wall -Wextra -Wno-unused-parameter
 
 ifeq ($(CROSSCOMPILE),)
 	ifneq ($(OS),Windows_NT)
 		LDFLAGS += -fPIC
 		CFLAGS += -fPIC
+		CXXFLAGS += -fPIC
+
 		ifeq ($(shell uname),Darwin)
 			LDFLAGS += -dynamiclib -undefined dynamic_lookup
 		endif
@@ -32,8 +35,14 @@ C_SRCS := c_src/libnif.c
 C_OBJS := $(C_SRCS:c_src/%.c=obj/%.o)
 C_DEPS := $(C_SRCS:c_src/%.c=obj/%.d)
 
+CXX_SRCS := c_src/cvtest.cpp
+CXX_OBJS := $(CXX_SRCS:c_src/%.cpp=obj/%.o)
+CXX_DEPS := $(CXX_SRCS:c_src/%.cpp=obj/%.d)
+
 $(warning C_OBJS = $(C_OBJS))
 $(warning C_DEPS = $(C_DEPS))
+$(warning CXX_OBJS = $(CXX_OBJS))
+$(warning CXX_DEPS = $(CXX_DEPS))
 
 OLD_SHELL := $(SHELL)
 SHELL = $(warning [Making: $@] [Dependencies: $^] [Changed: $?])$(OLD_SHELL)
@@ -49,7 +58,7 @@ obj:
 	mkdir -p obj
 
 
-$(NIF): $(C_OBJS)
+$(NIF): $(C_OBJS) $(CXX_OBJS)
 	$(CC) -o $@ $< $(ERL_LDFLAGS) $(LDFLAGS)
 
 $(C_DEPS): obj/%.d: c_src/%.c
@@ -57,6 +66,12 @@ $(C_DEPS): obj/%.d: c_src/%.c
 
 $(C_OBJS): obj/%.o: c_src/%.c obj/%.d
 	$(CC) -c $(ERL_CFLAGS) $(CFLAGS) -o $@ $<
+
+$(CXX_DEPS): obj/%.d: c_src/%.cpp
+	$(CXX) $(ERL_CFLAGS) $(CXXFLAGS) $< -MM -MP -MF $@
+
+$(CXX_OBJS): obj/%.o: c_src/%.cpp obj/%.d
+	$(CXX) -c $(ERL_CFLAGS) $(CXXFLAGS) -o $@ $<
 
 include $(shell ls $(C_DEPS) 2>/dev/null)
 
