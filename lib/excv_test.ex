@@ -13,5 +13,5 @@ defmodule ExcvTest do
     end
   end
 
-  def test, do: raise "NIF test/0 not implemented"
+  def test(_file), do: raise "NIF test/1 not implemented"
 end
