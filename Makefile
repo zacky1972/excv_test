@@ -13,8 +13,13 @@ endif
 ERL_CFLAGS ?= -I$(ERL_EI_INCLUDE_DIR)
 ERL_LDFLAGS ?= -L$(ERL_EI_LIBDIR)
 
-CV_CFLAGS ?= $(shell pkg-config opencv --cflags)
-CV_LDFLAGS ?= $(shell pkg-config opencv --libs)
+ifeq ($(shell uname),Darwin)
+	CV_CFLAGS ?= $(shell pkg-config opencv4 --cflags)
+	CV_LDFLAGS ?= $(shell pkg-config opencv4 --libs)
+else
+	CV_CFLAGS ?= $(shell pkg-config opencv --cflags)
+	CV_LDFLAGS ?= $(shell pkg-config opencv --libs)
+endif
 
 LDFLAGS += -shared -lstdc++
 CFLAGS ?= -std=c11 -Ofast -Wall -Wextra -Wno-unused-parameter
