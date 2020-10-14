@@ -13,6 +13,9 @@ endif
 ERL_CFLAGS ?= -I$(ERL_EI_INCLUDE_DIR)
 ERL_LDFLAGS ?= -L$(ERL_EI_LIBDIR)
 
+CV_CFLAGS ?= $(shell pkg-config opencv --cflags)
+CV_LDFLAGS ?= $(shell pkg-config opencv --libs)
+
 LDFLAGS += -shared -lstdc++
 CFLAGS ?= -std=c11 -Ofast -Wall -Wextra -Wno-unused-parameter
 CXXFLAGS ?= -std=c++11 -Ofast -Wall -Wextra -Wno-unused-parameter
@@ -59,7 +62,7 @@ obj:
 
 
 $(NIF): $(C_OBJS) $(CXX_OBJS)
-	$(CXX) -o $@ $^ $(ERL_LDFLAGS) $(LDFLAGS)
+	$(CXX) -o $@ $^ $(ERL_LDFLAGS) $(LDFLAGS) $(CV_LDFLAGS)
 
 $(C_DEPS): obj/%.d: c_src/%.c
 	$(CC) $(ERL_CFLAGS) $(CFLAGS) $< -MM -MP -MF $@
@@ -68,10 +71,10 @@ $(C_OBJS): obj/%.o: c_src/%.c obj/%.d
 	$(CC) -c $(ERL_CFLAGS) $(CFLAGS) -o $@ $<
 
 $(CXX_DEPS): obj/%.d: c_src/%.cpp
-	$(CXX) $(ERL_CFLAGS) $(CXXFLAGS) $< -MM -MP -MF $@
+	$(CXX) $(ERL_CFLAGS) $(CXXFLAGS) $(CV_CFLAGS) $< -MM -MP -MF $@
 
 $(CXX_OBJS): obj/%.o: c_src/%.cpp obj/%.d
-	$(CXX) -c $(ERL_CFLAGS) $(CXXFLAGS) -o $@ $<
+	$(CXX) -c $(ERL_CFLAGS) $(CXXFLAGS) $(CV_CFLAGS) -o $@ $<
 
 include $(shell ls $(C_DEPS) 2>/dev/null)
 

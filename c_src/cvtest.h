@@ -6,8 +6,10 @@ extern "C" {
 #endif // __cplusplus
 
 #include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
 
-void cvtest(size_t size, const unsigned char *filename);
+bool cvtest(size_t size, const unsigned char *filename, double *time, bool is_cuda, uint64_t loop);
 
 #ifdef __cplusplus
 }
