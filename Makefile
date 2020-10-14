@@ -82,6 +82,7 @@ $(CXX_OBJS): obj/%.o: c_src/%.cpp obj/%.d
 	$(CXX) -c $(ERL_CFLAGS) $(CXXFLAGS) $(CV_CFLAGS) -o $@ $<
 
 include $(shell ls $(C_DEPS) 2>/dev/null)
+include $(shell ls $(CXX_DEPS) 2>/dev/null)
 
 clean:
 	$(RM) $(NIF) obj/*

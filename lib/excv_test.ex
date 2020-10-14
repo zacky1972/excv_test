@@ -13,10 +13,10 @@ defmodule ExcvTest do
     end
   end
 
-  def test(_file, _cuda?, _loop), do: raise "NIF test/3 not implemented"
+  def test(_file1, _file2, _cuda?, _loop), do: raise "NIF test/4 not implemented"
 
-  def time_test(file, cuda?, loop) do
-    {time_elixir, {:ok, time_c}} = :timer.tc(fn -> test(file, cuda?, loop) end)
+  def time_test(file1, file2, cuda?, loop) do
+    {time_elixir, {:ok, time_c}} = :timer.tc(fn -> test(file1, file2, cuda?, loop) end)
     %{
       time_elixir: time_elixir, 
       time_c: time_c,

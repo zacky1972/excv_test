@@ -1,12 +1,11 @@
 #include <iostream>
-#include <ctime>
 #include <cmath>
-#include "bits/time.h"
+#include <chrono>
 
 #include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
+// #include <opencv2/highgui.hpp>
 
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/cudaarithm.hpp>
@@ -16,42 +15,59 @@
 
 #include "cvtest.h"
 
-extern "C" bool cvtest(size_t size, const unsigned char *_filename, double *time, bool is_cuda, uint64_t loop)
+extern "C" bool cvtest(size_t size1, const unsigned char *_filename1, size_t size2, const unsigned char *_filename2, double *time, bool is_cuda, uint64_t loop)
 {
-	std::clock_t begin = std::clock();
+	std::chrono::system_clock::time_point begin = std::chrono::system_clock::now();
 
 	try {
-		cv::String filename = cv::String((const char *)_filename, size);
-		cv::Mat srcHost = cv::imread(filename, cv::IMREAD_GRAYSCALE);
-		if(__builtin_expect(srcHost.empty(), false)) {
+		cv::String filename1 = cv::String((const char *)_filename1, size1);
+		cv::String filename2 = cv::String((const char *)_filename2, size2);
+		cv::Mat srcHost1 = cv::imread(filename1);
+		if(__builtin_expect(srcHost1.empty(), false)) {
+			return false;
+		}
+		cv::Mat srcHost2 = cv::imread(filename2);
+		if(__builtin_expect(srcHost2.empty(), false)) {
 			return false;
 		}
 		cv::Mat resultHost;
 		if(is_cuda) {
-			cv::cuda::GpuMat src;
-			src.upload(srcHost);
+			cv::cuda::GpuMat src1;
+			cv::cuda::GpuMat src2;
+			src1.upload(srcHost1);
+			src2.upload(srcHost2);
+			cv::cuda::GpuMat dst;
 			for(uint64_t i = 0; i < loop; i++) {
-				cv::cuda::GpuMat dst;
-				cv::cuda::bilateralFilter(src, dst, 3, 1, 1);
-				src = dst;
+				cv::cuda::GpuMat diff, threshold;
+				cv::cuda::absdiff(src1, src2, diff);
+				cv::cuda::threshold(diff, threshold, 1, 128, cv::THRESH_BINARY);
+				dst = threshold;
 			}
-			src.download(resultHost);
+			dst.download(resultHost);
 		} else {
-			cv::Mat src = srcHost;
+			cv::Mat src1 = srcHost1;
+			cv::Mat src2 = srcHost2;
+			cv::Mat dst;
 			for(uint64_t i = 0; i < loop; i++) {
-				cv::Mat dst;
-				cv::bilateralFilter(src, dst, 3, 1, 1);
-				src = dst;
+				cv::Mat diff, threshold;
+				cv::absdiff(src1, src2, diff);
+				cv::threshold(diff, threshold, 1, 128, cv::THRESH_BINARY);
+				dst = threshold;
 			}
-			resultHost = src;
+			resultHost = dst;
+
+			/*
+			cv::imshow("threshold", resultHost);
+			cv::waitKey();
+			*/
 		}
 	} catch(const cv::Exception& ex) {
 		std::cout << "Error: " << ex.what() << std::endl;
 		return false;
 	}
 
-	std::clock_t end = std::clock();
-	*time = double(end - begin) / CLOCKS_PER_SEC * 1000000;
+	std::chrono::system_clock::time_point end = std::chrono::system_clock::now();
+	*time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count());
 	return true;
 }
 
