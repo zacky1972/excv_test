@@ -41,7 +41,7 @@ defmodule ExcvTest do
 
   def flow_test_img(cuda?, loop) when loop >= 1 do
     1..loop
-    |> Flow.from_enumeranble(max_demand: 1)
+    |> Flow.from_enumerable(max_demand: 1)
     |> Flow.map(fn _ -> test_img(cuda?) end)
     |> Flow.map(fn {status, _} -> status end)
     |> Enum.to_list()
