@@ -27,3 +27,7 @@ excv_test-*.tar
 
 # Ignore obj
 /obj
+
+# Ignore bench/snapshots
+/bench/snapshots
+

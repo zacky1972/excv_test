@@ -23,7 +23,9 @@ defmodule ExcvTest.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:elixir_make, "~> 0.4", runtime: false}
+      {:elixir_make, "~> 0.4", runtime: false},
+      {:flow, "~> 1.0"},
+      {:benchfella, "~> 0.3.0"}
     ]
   end
 end

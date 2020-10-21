@@ -49,6 +49,8 @@ CXX_SRCS := c_src/cvtest.cpp
 CXX_OBJS := $(CXX_SRCS:c_src/%.cpp=obj/%.o)
 CXX_DEPS := $(CXX_SRCS:c_src/%.cpp=obj/%.d)
 
+$(warning CV_CFLAGS = $(CV_CFLAGS))
+$(warning CV_LDFLAGS = $(CV_LDFLAGS))
 $(warning C_OBJS = $(C_OBJS))
 $(warning C_DEPS = $(C_DEPS))
 $(warning CXX_OBJS = $(CXX_OBJS))
@@ -57,12 +59,14 @@ $(warning CXX_DEPS = $(CXX_DEPS))
 OLD_SHELL := $(SHELL)
 SHELL = $(warning [Making: $@] [Dependencies: $^] [Changed: $?])$(OLD_SHELL)
 
-all: priv obj $(NIF)
+all: priv priv/img obj $(NIF)
 
 
 priv:
 	mkdir -p priv
 
+priv/img: priv
+	cp -r img priv/img
 
 obj:
 	mkdir -p obj
