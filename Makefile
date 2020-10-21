@@ -13,12 +13,14 @@ endif
 ERL_CFLAGS ?= -I$(ERL_EI_INCLUDE_DIR)
 ERL_LDFLAGS ?= -L$(ERL_EI_LIBDIR)
 
-ifeq ($(shell uname),Darwin)
+ifeq ($(shell pkg-config opencv4 --exists || echo $$?),)
 	CV_CFLAGS ?= $(shell pkg-config opencv4 --cflags)
 	CV_LDFLAGS ?= $(shell pkg-config opencv4 --libs)
-else
+else ifeq ($(shell pkg-config opencv --exists || echo $$?),)
 	CV_CFLAGS ?= $(shell pkg-config opencv --cflags)
 	CV_LDFLAGS ?= $(shell pkg-config opencv --libs)
+else
+	$(error OpenCV doesn't exist.)
 endif
 
 LDFLAGS += -shared -lstdc++
