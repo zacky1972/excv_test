@@ -39,6 +39,12 @@ ifeq ($(CROSSCOMPILE),)
 	endif
 endif
 
+ifeq ($(shell uname -s),Linux)
+	ifneq (,$(wildcard /usr/local/cuda/version.txt))
+		CXXFLAGS += -D EXIST_CUDA
+	endif
+endif
+
 NIF=priv/libnif.so
 
 C_SRCS := c_src/libnif.c

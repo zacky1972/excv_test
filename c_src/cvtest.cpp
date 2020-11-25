@@ -7,9 +7,11 @@
 #include <opencv2/imgcodecs.hpp>
 // #include <opencv2/highgui.hpp>
 
+#ifdef EXIST_CUDA
 #include <opencv2/core/cuda.hpp>
 #include <opencv2/cudaarithm.hpp>
 #include <opencv2/cudaimgproc.hpp>
+#endif
 
 #include <stdint.h>
 
@@ -31,6 +33,7 @@ extern "C" bool cvtest(size_t size1, const unsigned char *_filename1, size_t siz
 			return false;
 		}
 		cv::Mat resultHost;
+#ifdef EXIST_CUDA
 		if(is_cuda) {
 			cv::cuda::GpuMat src1;
 			cv::cuda::GpuMat src2;
@@ -45,6 +48,7 @@ extern "C" bool cvtest(size_t size1, const unsigned char *_filename1, size_t siz
 			}
 			dst.download(resultHost);
 		} else {
+#endif
 			cv::Mat src1 = srcHost1;
 			cv::Mat src2 = srcHost2;
 			cv::Mat dst;
@@ -60,7 +64,9 @@ extern "C" bool cvtest(size_t size1, const unsigned char *_filename1, size_t siz
 			cv::imshow("threshold", resultHost);
 			cv::waitKey();
 			*/
+#ifdef EXIST_CUDA
 		}
+#endif
 	} catch(const cv::Exception& ex) {
 		std::cout << "Error: " << ex.what() << std::endl;
 		return false;
