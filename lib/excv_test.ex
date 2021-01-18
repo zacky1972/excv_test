@@ -46,4 +46,9 @@ defmodule ExcvTest do
     |> Flow.map(fn {status, _} -> status end)
     |> Enum.to_list()
   end
+
+  def pelemay_fp_test_img(cuda?, loop) when loop >= 1 do
+    1..loop
+    |> PelemayFp.map(fn _ -> test_img(cuda?) end, 1)
+  end
 end

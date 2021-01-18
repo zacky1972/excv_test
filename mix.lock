@@ -3,4 +3,5 @@
   "elixir_make": {:hex, :elixir_make, "0.6.1", "8faa29a5597faba999aeeb72bbb9c91694ef8068f0131192fb199f98d32994ef", [:mix], [], "hexpm", "35d33270680f8d839a4003c3e9f43afb595310a592405a00afc12de4c7f55a18"},
   "flow": {:hex, :flow, "1.0.0", "3df0b6687ba01dae248c615d50e1f8b36631e3eb9b9a663adf38262035d9fc08", [:mix], [{:gen_stage, "~> 1.0", [hex: :gen_stage, repo: "hexpm", optional: false]}], "hexpm", "103e0d30539db120a432d6433123a6ed885b10bde244e9f4194e3beee080ac29"},
   "gen_stage": {:hex, :gen_stage, "1.0.0", "51c8ae56ff54f9a2a604ca583798c210ad245f415115453b773b621c49776df5", [:mix], [], "hexpm", "1d9fc978db5305ac54e6f5fec7adf80cd893b1000cf78271564c516aa2af7706"},
+  "pelemay_fp": {:hex, :pelemay_fp, "0.1.2", "6ddb0fb8e91c75f490b12ddb69fd3be77d54ce32e8ed31964a0b8e4e4cf05382", [:mix], [], "hexpm", "2d3f1ed87c0a275cd34abd7eadc5fd6bbaecfa75963308fc1d12f8bf40b4fcbe"},
 }

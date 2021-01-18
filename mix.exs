@@ -25,7 +25,8 @@ defmodule ExcvTest.MixProject do
     [
       {:elixir_make, "~> 0.4", runtime: false},
       {:flow, "~> 1.0"},
-      {:benchfella, "~> 0.3.0"}
+      {:benchfella, "~> 0.3.0"},
+      {:pelemay_fp, "~> 0.1"}
     ]
   end
 end
