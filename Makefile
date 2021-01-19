@@ -46,8 +46,9 @@ ifeq ($(shell uname -s),Linux)
 endif
 
 NIF=priv/libnif.so
+PORT=priv/excv
 
-C_SRCS := c_src/libnif.c
+C_SRCS := c_src/libnif.c c_src/excv.c
 C_OBJS := $(C_SRCS:c_src/%.c=obj/%.o)
 C_DEPS := $(C_SRCS:c_src/%.c=obj/%.d)
 
@@ -65,7 +66,7 @@ $(warning CXX_DEPS = $(CXX_DEPS))
 OLD_SHELL := $(SHELL)
 SHELL = $(warning [Making: $@] [Dependencies: $^] [Changed: $?])$(OLD_SHELL)
 
-all: priv priv/img obj $(NIF)
+all: priv priv/img obj $(NIF) $(PORT)
 
 
 priv:
@@ -77,8 +78,10 @@ priv/img: priv
 obj:
 	mkdir -p obj
 
+$(PORT): obj/excv.o $(CXX_OBJS)
+	$(CXX) -o $@ $^ $(ERL_LDFLAGS) $(CV_LDFLAGS)
 
-$(NIF): $(C_OBJS) $(CXX_OBJS)
+$(NIF): obj/libnif.o $(CXX_OBJS)
 	$(CXX) -o $@ $^ $(ERL_LDFLAGS) $(LDFLAGS) $(CV_LDFLAGS)
 
 $(C_DEPS): obj/%.d: c_src/%.c
